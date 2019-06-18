@@ -1,5 +1,10 @@
-const webpackNodeExternals = require("webpack-node-externals");
+/* globals __dirname */
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
+const webpackNodeExternals = require("webpack-node-externals");
+
 const server = {
     // Where to start the build
     entry: {
@@ -17,29 +22,56 @@ const server = {
                     // Using babel-loader
                     loader: "babel-loader"
                 }
+            },
+            {
+                test: /\.hbs$/,
+                exclude: "/node_modules",
+                use: {
+                    loader: "handlebars-loader"
+                }
+            },
+            {
+                test: /\.css$/,
+                exclude: "/node_modules",
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
+                    {
+                        loader: "css-loader",
+                        options: {
+                            modules: {
+                                localIdentName: "[local]___[hash:base64:5]"
+                            },
+                            url: false,
+                            sourceMap: true
+                        }
+                    }
+                ]
             }
         ]
     },
-    plugins: [],
+    plugins: [
+        new HtmlWebpackPlugin({
+            inject: false,
+            template: "./src/index.html.hbs"
+        }),
+        new MiniCssExtractPlugin({
+            filename: "public/styles.css"
+        }),
+    ],
     resolve: {
-        extensions: [".js", ".jsx"],
+        extensions: [ ".js", ".jsx" ],
     },
     output: {
         // What the file with all the JS will be called
         filename: "server.js",
         // Where to find the file
         path: path.resolve(__dirname + "/dist"),
-        // The JS file path that will be used in the HTML file
-        publicPath: "/"
 
     },
     // The environment to target the build for
-    target: "node",
-    // Configure the webpack dev server
-    devServer: {
-        // The directory that the server will start from (the root)
-        contentBase: path.join(__dirname, "/dist")
-    }
+    target: "node"
 };
 
 module.exports = server;

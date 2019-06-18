@@ -1,0 +1,10 @@
+.header {
+    border: solid 1px black;
+    top: 0;
+    box-sizing: border-box;
+    height: 150px;
+    width: 100%;
+    padding: 10px;
+    position: absolute;
+    z-index: 99999;
+}

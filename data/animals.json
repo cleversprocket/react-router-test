@@ -1,0 +1,14 @@
+{
+    "cat": {
+        "name": "cat",
+        "size": "medium"
+    },
+    "mouse": {
+        "name": "mouse",
+        "size": "small"
+    },
+    "tiger": {
+        "name": "tiger",
+        "size": "large"
+    }
+}

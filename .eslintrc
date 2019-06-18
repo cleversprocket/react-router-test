@@ -16,12 +16,26 @@
         "react"
     ],
     "rules": {
+        "array-bracket-spacing": [
+            "error",
+            "always",
+            {
+                "objectsInArrays": false,
+                "singleValue": false
+            }
+        ],
+        "computed-property-spacing": [
+            "error",
+            "never"
+        ],
         "indent": [
             "error",
             4
         ],
-        "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error",
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
         "max-len": [
             "error",
             {
@@ -29,14 +43,19 @@
                 "ignoreUrls": true
             }
         ],
-        "linebreak-style": [
+        "no-multi-spaces": [
+            "error"
+        ],
+        "object-curly-spacing": [
             "error",
-            "unix"
+            "always"
         ],
         "quotes": [
             "error",
             "double"
         ],
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
         "semi": [
             "error",
             "always"

@@ -1,13 +1,13 @@
 import React from "react";
 
-class App extends React.Component {
+class Home extends React.PureComponent {
     render() {
         return (
             <div>
-                This is the application
+                I am the homepage
             </div>
         );
     }
 }
 
-export default App;
+export default Home;

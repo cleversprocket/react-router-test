@@ -1,23 +1,133 @@
-import App from "./index";
+import { matchRoutes } from "react-router-config";
+import { Provider } from "react-redux";
+import { renderRoutes } from "react-router-config";
+import { StaticRouter } from "react-router-dom";
+import animalData from "../data/animals.json";
+import appTemplate from "./index.html.hbs";
+import generateStore from "./store";
+import Hapi from "@hapi/hapi";
+import Inert from "@hapi/inert";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-import Hapi from "hapi";
+import routes from "./routes";
 
-const init = () => {
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const init = async () => {
     const server = Hapi.server({
         host: "localhost",
         port: 3000
     });
 
-    server.route({
-        method: "GET",
-        path: "/",
-        handler: () => {
-            return ReactDOMServer.renderToString(<App name />);
-        }
-    });
+    await server.register(Inert);
 
-    server.start();
+    server.route([
+        {
+            method: "GET",
+            path: "/api/animals/{animalName}",
+            handler: async (request) => {
+                await sleep(2000);
+
+                try {
+                    const animalName = request.params.animalName;
+                    const data = animalData[animalName];
+
+                    return JSON.stringify([data]);
+                } catch(e) {
+                    return e;
+                }
+            }
+        },
+        {
+            path: "/favicon.ico",
+            method: "get",
+            config: {
+                auth: false,
+                cache: {
+                    expiresIn: 1000*60*60*24*21
+                }
+            },
+            handler: function(request, h) {
+                return h.response()
+                    .code(204)
+                    .type("image/x-icon");
+            }
+        },
+        {
+            method: "GET",
+            path: "/public/{path*}",
+            handler: {
+                directory: {
+                    path: "./dist/public/",
+                    redirectToSlash: true,
+                    index: true,
+                }
+            }
+        },
+        {
+            method: "GET",
+            path: "/{p*}",
+            handler: async (request) => {
+                try {
+
+                    const matchingRoutes = matchRoutes(
+                        routes,
+                        request.url.pathname
+                    );
+
+                    const store = generateStore();
+
+                    const dataCalls = matchingRoutes.map(({ route, match }) => {
+                        const {
+                            loadData
+                        } = route;
+                        if(loadData) {
+                            return route.loadData(
+                                store.dispatch,
+                                match.params || {}
+                            );
+                        }
+                        return Promise.resolve();
+                    });
+
+                    await Promise.all(dataCalls);
+
+                    const initialData = store.getState();
+
+                    const markup = ReactDOMServer.renderToString(
+                        <Provider store={store} >
+                            <StaticRouter
+                                context={{}}
+                                location={request.url.pathname}
+                            >
+                                {renderRoutes(routes)}
+                            </StaticRouter>
+                        </Provider>
+                    );
+
+
+                    const fullHTML = appTemplate({
+                        initialData: JSON.stringify(initialData),
+                        markup
+                    });
+
+                    return fullHTML;
+                } catch(e) {
+                    // eslint-disable-next-line no-console
+                    console.log(e);
+                }
+            }
+        }
+    ]);
+
+    await server.start();
+
+    // eslint-disable-next-line no-console
+    console.log("Server online");
 };
 
 init();
