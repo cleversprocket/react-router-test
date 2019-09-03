@@ -1,5 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+import {fetchAnimalData} from "./store/thunks";
+import withServerFetch from "./with-server-fetch";
 
 class Animals extends React.PureComponent {
     render() {
@@ -7,6 +9,7 @@ class Animals extends React.PureComponent {
             match,
             animal
         } = this.props;
+
         return (
             <div>
                 <div>I am the Animals page for {match.params.animalName}</div>
@@ -18,8 +21,13 @@ class Animals extends React.PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        animal: state.animal
+        animal: state.animal,
+        isServer: state.env.isServer
     };
 };
 
-export default connect(mapStateToProps)(Animals);
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    serverFetch: () => dispatch(fetchAnimalData(ownProps.match.params.animalName))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withServerFetch(Animals));
