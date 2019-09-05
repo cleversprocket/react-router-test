@@ -85,7 +85,8 @@ const init = async () => {
                         const {
                             loadData
                         } = route;
-                        if(loadData) {
+
+                        if (loadData) {
                             return route.loadData(
                                 store.dispatch,
                                 match.params || {}

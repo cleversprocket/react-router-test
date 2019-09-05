@@ -2,15 +2,47 @@ import React from "react";
 import { connect } from "react-redux";
 
 class Animals extends React.PureComponent {
+    constructor() {
+        super();
+    }
+
+    componentDidUpdate(prevProps) {
+        const {
+            dispatch,
+            match: {
+                params = {},
+                url
+            },
+            route: {
+                loadData
+            }
+        } = this.props;
+
+        const {
+            match: {
+                url: prevUrl
+            }
+        } = prevProps;
+
+        if (url !== prevUrl) {
+
+            loadData(
+                dispatch,
+                params || {}
+            );
+        }
+    }
+
     render() {
         const {
             match,
-            animal
+            animals,
         } = this.props;
+
         return (
             <div>
                 <div>I am the Animals page for {match.params.animalName}</div>
-                <div>The animals size is {animal[0].size}</div>
+                <div>The animals size is {animals[0].size}</div>
             </div>
         );
     }
@@ -18,7 +50,7 @@ class Animals extends React.PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        animal: state.animal
+        animals: state.animals
     };
 };
 

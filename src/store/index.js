@@ -3,7 +3,7 @@ import { combineReducers, applyMiddleware, createStore } from "redux";
 import reduxThunk from "redux-thunk";
 
 const rootReducer = combineReducers({
-    animal: animalReducer
+    animals: animalReducer
 });
 
 const generateStore = (initialState = {}) => {
