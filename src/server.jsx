@@ -99,8 +99,7 @@ const init = async () => {
 
                     await Promise.all(dataCalls);
 
-                    const markup = await frontloadServerRender(() => (
-                        ReactDOMServer.renderToString(
+                    const markup = ReactDOMServer.renderToString(
                             <Provider store={store} >
                                 <StaticRouter
                                     context={context}
@@ -109,8 +108,7 @@ const init = async () => {
                                     {renderRoutes(routes)}
                                 </StaticRouter>
                             </Provider>
-                        )
-                    ));
+                        );
 
                     const afterRender = Date.now();
 
