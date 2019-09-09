@@ -11,6 +11,7 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import routes from "./routes";
 import {Frontload, frontloadServerRender} from "react-frontload";
+import AppDynamic from "./app-dynamic";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -75,6 +76,8 @@ const init = async () => {
                     const {store} = generateStore({}, request.url.pathname);
                     const context = {};
 
+                    const beforeRender = Date.now();
+
                     const markup = await frontloadServerRender(() => (
                         ReactDOMServer.renderToString(
                             <Provider store={store} >
@@ -88,7 +91,28 @@ const init = async () => {
                                 </StaticRouter>
                             </Provider>
                         )
-                    ))
+                    ));
+
+                    // const markup = await frontloadServerRender(() => (
+                    //     ReactDOMServer.renderToString(
+                    //         <Provider store={store} >
+                    //             <StaticRouter
+                    //                 context={context}
+                    //                 location={request.url.pathname}
+                    //             >
+                    //                 <Frontload>
+                    //                     <AppDynamic />
+                    //                 </Frontload>
+                    //             </StaticRouter>
+                    //         </Provider>
+                    //     )
+                    // ));
+
+                    const afterRender = Date.now();
+
+                    // console.log("beforeRender: ", beforeRender);
+                    // console.log("afterRender: ", afterRender);
+                    // console.log("server renderToString time: ", afterRender - beforeRender);
 
                     const initialData = store.getState();
                     const fullHTML = appTemplate({

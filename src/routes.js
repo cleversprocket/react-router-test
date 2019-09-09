@@ -2,6 +2,16 @@ import Home from "./home";
 import Animals from "./animals";
 import { fetchAnimalData } from "./store/thunks";
 import App from "./app";
+import React from "react";
+
+const testRoutes = Array.apply(null, new Array(100)).map((val, index) => {
+    const Component = () => <h1>I'm at path /test-{index}</h1>;
+
+    return {
+        path: `/test-${index}`,
+        component: Component
+    };
+});
 
 const routes = [
     {
@@ -21,9 +31,10 @@ const routes = [
                 path: "/animals/:animalName",
                 strict: false,
                 component: Animals
-            }]
+            },
+            ...testRoutes
+        ]
     }
 ];
-
 
 export default routes;

@@ -3,6 +3,7 @@ import { combineReducers, applyMiddleware, createStore, compose } from "redux";
 import reduxThunk from "redux-thunk";
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import { connectRouter, routerMiddleware } from "connected-react-router";
+import routerTransitionMiddleware from "./router-transition-middleware";
 
 export const isServer = !(
     typeof window !== 'undefined' &&
@@ -42,7 +43,7 @@ const generateStore = (initialState = {}, url = "/") => {
         rootReducer,
         initialState,
         compose(
-            applyMiddleware(reduxThunk, routerMiddleware(history)),
+            applyMiddleware(reduxThunk, routerMiddleware(history), routerTransitionMiddleware(history)),
             ...enhancers
         )
     );
