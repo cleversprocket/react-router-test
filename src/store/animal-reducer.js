@@ -5,6 +5,11 @@ import {
 } from "./actions";
 import { handleActions } from "redux-actions";
 
+const defaultState = [{
+    name: null,
+    size: null
+}];
+
 const fetchAnimalReducer = (state) => {
     return {
         ...state,
@@ -32,6 +37,6 @@ const reducer = handleActions({
     [FETCH_ANIMAL]: fetchAnimalReducer,
     [FETCH_ANIMAL_SUCCESS]: fetchAnimalSuccessReducer,
     [FETCH_ANIMAL_FAILURE]: fetchAnimalFailureReducer
-}, {});
+}, defaultState);
 
 export default reducer;
