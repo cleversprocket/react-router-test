@@ -10,8 +10,7 @@ import Inert from "@hapi/inert";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import routes from "./routes";
-import {Frontload, frontloadServerRender} from "react-frontload";
-import AppDynamic from "./app-dynamic";
+import loadRouteData from "./load-route-data";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -76,45 +75,22 @@ const init = async () => {
                     const {store} = generateStore({}, request.url.pathname);
                     const context = {};
 
-                    const beforeRender = Date.now();
-
                     const matchingRoutes = matchRoutes(
                         routes,
                         request.url.pathname
                     );
 
-                    const dataCalls = matchingRoutes.map(({route, match}) => {
-                        const {
-                            loadData
-                        } = route;
-                        
-                        if (loadData) { 
-                            return route.loadData(
-                                store.dispatch,
-                                match.params || {}
-                            );
-                        }
-                        return Promise.resolve();
-                    });
+                    const dataCalls = loadRouteData(matchingRoutes, store.dispatch);
 
                     await Promise.all(dataCalls);
 
                     const markup = ReactDOMServer.renderToString(
                             <Provider store={store} >
-                                <StaticRouter
-                                    context={context}
-                                    location={request.url.pathname}
-                                >
+                                <StaticRouter context={context} location={request.url.pathname}>
                                     {renderRoutes(routes)}
                                 </StaticRouter>
                             </Provider>
                         );
-
-                    const afterRender = Date.now();
-
-                    // console.log("beforeRender: ", beforeRender);
-                    // console.log("afterRender: ", afterRender);
-                    // console.log("server renderToString time: ", afterRender - beforeRender);
 
                     const initialData = store.getState();
                     const fullHTML = appTemplate({

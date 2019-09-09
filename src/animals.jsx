@@ -5,34 +5,7 @@ class Animals extends React.PureComponent {
     constructor() {
         super();
     }
-
-    componentDidUpdate(prevProps) {
-        const {
-            dispatch,
-            match: {
-                params = {},
-                url
-            },
-            route: {
-                loadData
-            }
-        } = this.props;
-
-        const {
-            match: {
-                url: prevUrl
-            }
-        } = prevProps;
-
-        if (url !== prevUrl) {
-
-            loadData(
-                dispatch,
-                params || {}
-            );
-        }
-    }
-
+    
     render() {
         const {
             match,

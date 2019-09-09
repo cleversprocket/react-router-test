@@ -43,7 +43,7 @@ const generateStore = (initialState = {}, url = "/") => {
         rootReducer,
         initialState,
         compose(
-            applyMiddleware(reduxThunk, routerMiddleware(history), routerTransitionMiddleware(history)),
+            applyMiddleware(reduxThunk, routerTransitionMiddleware(history), routerMiddleware(history)),
             ...enhancers
         )
     );

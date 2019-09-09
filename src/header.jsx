@@ -1,18 +1,47 @@
 import React from "react";
 import styles from "./header.css";
-import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import {push} from "connected-react-router";
 
 class Header extends React.PureComponent {
+    constructor(props) {
+        super(props)
+        this.handleLinkClick = this.handleLinkClick.bind(this);
+    }
+
+    handleLinkClick(e) {
+        e.preventDefault();
+        this.props.dispatch(push(e.target.getAttribute("href")));
+    }
+    
     render() {
+
+        const {
+            router: {
+                location: {
+
+                }
+            }
+        } = this.props
+
         return (
             <div className={styles.header}>
                 <div>I am the Header</div>
-                <div><Link to="/">Home</Link></div>
-                <div><Link to="/animals/tiger">Tiger</Link></div>
-                <div><Link to="/animals/mouse">Mouse</Link></div>
+                <div><a onClick={this.handleLinkClick} href="/">Root</a></div>
+                <div><a onClick={this.handleLinkClick} href="/home">Home</a></div>
+                <div><a onClick={this.handleLinkClick} href="/animals/tiger">Tiger</a></div>
+                <div><a onClick={this.handleLinkClick} href="/animals/mouse">Mouse</a></div>
             </div>
         );
     }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+    return {
+        router: state.router
+    };
+};
+
+
+export default connect(mapStateToProps)(Header);
+
