@@ -16,19 +16,12 @@ class Header extends React.PureComponent {
     
     render() {
 
-        const {
-            router: {
-                location: {
-
-                }
-            }
-        } = this.props
-
         return (
             <div className={styles.header}>
                 <div>I am the Header</div>
                 <div><a onClick={this.handleLinkClick} href="/">Root</a></div>
                 <div><a onClick={this.handleLinkClick} href="/home">Home</a></div>
+                <div><a onClick={this.handleLinkClick} href="/animals">Animal</a></div>
                 <div><a onClick={this.handleLinkClick} href="/animals/tiger">Tiger</a></div>
                 <div><a onClick={this.handleLinkClick} href="/animals/mouse">Mouse</a></div>
             </div>
@@ -41,7 +34,6 @@ const mapStateToProps = (state) => {
         router: state.router
     };
 };
-
 
 export default connect(mapStateToProps)(Header);
 

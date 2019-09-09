@@ -74,11 +74,13 @@ const init = async () => {
                 try {
                     const {store} = generateStore({}, request.url.pathname);
                     const context = {};
-
+                    
                     const matchingRoutes = matchRoutes(
                         routes,
                         request.url.pathname
                     );
+
+                    console.log("matchRoutes: ", matchingRoutes);
 
                     const dataCalls = loadRouteData(matchingRoutes, store.dispatch);
 
