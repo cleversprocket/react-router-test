@@ -5,7 +5,7 @@ import {
     fetchAnimalFailureAction
 } from "./actions";
 
-export const fetchAnimalData = (animalName) => {
+export const fetchAnimalData = ({animalName}) => {
     return async (dispatch) => {
         const url = `http://localhost:3000/api/animals/${animalName}`;
         try {

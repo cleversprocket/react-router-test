@@ -78,6 +78,27 @@ const init = async () => {
 
                     const beforeRender = Date.now();
 
+                    const matchingRoutes = matchRoutes(
+                        routes,
+                        request.url.pathname
+                    );
+
+                    const dataCalls = matchingRoutes.map(({route, match}) => {
+                        const {
+                            loadData
+                        } = route;
+                        
+                        if (loadData) { 
+                            return route.loadData(
+                                store.dispatch,
+                                match.params || {}
+                            );
+                        }
+                        return Promise.resolve();
+                    });
+
+                    await Promise.all(dataCalls);
+
                     const markup = await frontloadServerRender(() => (
                         ReactDOMServer.renderToString(
                             <Provider store={store} >
@@ -85,28 +106,11 @@ const init = async () => {
                                     context={context}
                                     location={request.url.pathname}
                                 >
-                                    <Frontload>
-                                        {renderRoutes(routes)}
-                                    </Frontload>
+                                    {renderRoutes(routes)}
                                 </StaticRouter>
                             </Provider>
                         )
                     ));
-
-                    // const markup = await frontloadServerRender(() => (
-                    //     ReactDOMServer.renderToString(
-                    //         <Provider store={store} >
-                    //             <StaticRouter
-                    //                 context={context}
-                    //                 location={request.url.pathname}
-                    //             >
-                    //                 <Frontload>
-                    //                     <AppDynamic />
-                    //                 </Frontload>
-                    //             </StaticRouter>
-                    //         </Provider>
-                    //     )
-                    // ));
 
                     const afterRender = Date.now();
 

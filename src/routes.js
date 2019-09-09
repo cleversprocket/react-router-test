@@ -30,7 +30,10 @@ const routes = [
             {
                 path: "/animals/:animalName",
                 strict: false,
-                component: Animals
+                component: Animals,
+                loadData: async (dispatch, data) => {
+                    return await fetchAnimalData(data)(dispatch);
+                }
             },
             ...testRoutes
         ]

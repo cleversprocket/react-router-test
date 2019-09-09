@@ -29,7 +29,7 @@ const generateStore = (initialState = {}, url = "/") => {
     }
 
     const rootReducer = combineReducers({
-        animal: animalReducer,
+        animals: animalReducer,
         env: (state = {}) => {
             return {
                 ...state,
