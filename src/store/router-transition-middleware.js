@@ -11,6 +11,7 @@ import routes from "../routes";
 // }
 
 const routerTransitionMiddleware = history => store => next => async action => {
+    console.log("");
     console.log("intercepted connected-react-router. action: ", action);
     const {
         type, 
@@ -28,13 +29,14 @@ const routerTransitionMiddleware = history => store => next => async action => {
         dispatch
     } = store;
 
-    let passThrough = true;
     const navAction = historyMethod || browserAction;
+    const isPopState = type === LOCATION_CHANGE && navAction.toLowerCase() === "pop";
+    let passThrough = true;
 
     if (!isFirstRendering)  {
         if (type === CALL_HISTORY_METHOD) {
             passThrough = false;
-        } else if (type === LOCATION_CHANGE && navAction.toLowerCase() === "pop") {
+        } else if (isPopState) {
             passThrough = false;
         }
     }
@@ -52,9 +54,13 @@ const routerTransitionMiddleware = history => store => next => async action => {
     const toRoute = pathname || args[0]; 
     const matchingRoutes = matchRoutes(routes, toRoute);
 
-    await Promise.all(loadRouteData(matchingRoutes, dispatch));
-
-    next(action);
+    if (isPopState) {
+        // We need to grab from the cache and load it in state synchronously
+        next(action);
+    } else {
+        await Promise.all(loadRouteData(matchingRoutes, dispatch));
+        next(action);
+    }
 };
 
 export default routerTransitionMiddleware;
