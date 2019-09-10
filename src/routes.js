@@ -9,20 +9,11 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const testRoutes = Array.apply(null, new Array(100)).map((val, index) => {
-    const Component = () => <h1>I'm at path /test-{index}</h1>;
-
-    return {
-        path: `/test-${index}`,
-        component: Component
-    };
-});
-
 const routes = [
     {
 
         component: App,
-        loadData: async (dispatch, data) => {
+        loadData: async () => {
             await sleep(2000);
             console.log("Fetched App");
             return Promise.resolve();
@@ -32,7 +23,7 @@ const routes = [
                 path: "/",
                 exact: true,
                 component: Home,
-                loadData: async (dispatch, data) => {
+                loadData: async () => {
                     await sleep(2000);
                     console.log("Fetched home route");
                     return Promise.resolve();
@@ -46,7 +37,7 @@ const routes = [
                 path: "/animals",
                 exact: true,
                 component: Animal,
-                loadData: async (dispatch, data) => {
+                loadData: async () => {
                     await sleep(2000);
                     console.log("Fetched root animal data");
                     return Promise.resolve();

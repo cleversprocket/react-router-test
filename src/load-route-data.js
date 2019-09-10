@@ -1,5 +1,5 @@
 const loadRouteData = (matchingRoutes, dispatch) => {
-    const dataCalls = matchingRoutes.map(({route, match}) => {
+    const dataCalls = matchingRoutes.map(({ route, match }) => {
         const {
             loadData
         } = route;
@@ -14,6 +14,6 @@ const loadRouteData = (matchingRoutes, dispatch) => {
     });
 
     return dataCalls;
-}
+};
 
 export default loadRouteData;
