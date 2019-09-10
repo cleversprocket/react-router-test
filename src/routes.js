@@ -9,13 +9,21 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const testRoutes = Array.apply(null, new Array(100)).map((val, index) => {
+    const Component = () => <h1>I'm at path /test-{index}</h1>;
+
+    return {
+        path: `/test-${index}`,
+        component: Component
+    };
+});
+
 const routes = [
     {
 
         component: App,
-        loadData: async () => {
+        loadData: async (dispatch, data) => {
             await sleep(2000);
-            console.log("Fetched App");
             return Promise.resolve();
         },
         routes: [
@@ -23,9 +31,8 @@ const routes = [
                 path: "/",
                 exact: true,
                 component: Home,
-                loadData: async () => {
+                loadData: async (dispatch, data) => {
                     await sleep(2000);
-                    console.log("Fetched home route");
                     return Promise.resolve();
                 }
             },                        
@@ -35,22 +42,22 @@ const routes = [
             },
             {
                 path: "/animals",
-                exact: true,
+                // exact: true,
                 component: Animal,
-                loadData: async () => {
+                loadData: async (dispatch, data) => {
                     await sleep(2000);
-                    console.log("Fetched root animal data");
                     return Promise.resolve();
                 },
+                routes: [
+                    {
+                        path: "/animals/:animalName",
+                        component: Animals,
+                        loadData: async (dispatch, data) => {
+                            return await fetchAnimalData(data)(dispatch);
+                        }
+                    }
+                ]
             },
-            {
-                path: "/animals/:animalName",
-                component: Animals,
-                loadData: async (dispatch, data) => {
-                    console.log("Fetched animals/:animalName");
-                    return await fetchAnimalData(data)(dispatch);
-                }
-            },                      
         ]
     }
 ];

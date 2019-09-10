@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./header.css";
 import { connect } from "react-redux";
-import {push} from "connected-react-router";
+import { push } from "connected-react-router";
 
 class Header extends React.PureComponent {
     constructor(props) {
-        super(props)
+        super(props);
         this.handleLinkClick = this.handleLinkClick.bind(this);
     }
 

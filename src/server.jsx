@@ -1,7 +1,7 @@
-import {matchRoutes} from "react-router-config";
-import {Provider} from "react-redux";
-import {renderRoutes} from "react-router-config";
-import {StaticRouter} from "react-router-dom";
+import { matchRoutes } from "react-router-config";
+import { Provider } from "react-redux";
+import { renderRoutes } from "react-router-config";
+import { StaticRouter } from "react-router-dom";
 import animalData from "../data/animals.json";
 import appTemplate from "./index.html.hbs";
 import generateStore from "./store";
@@ -72,7 +72,7 @@ const init = async () => {
             path: "/{p*}",
             handler: async (request) => {
                 try {
-                    const {store} = generateStore({}, request.url.pathname);
+                    const { store } = generateStore({}, request.url.pathname);
                     const context = {};
                     
                     const matchingRoutes = matchRoutes(
@@ -80,19 +80,17 @@ const init = async () => {
                         request.url.pathname
                     );
 
-                    console.log("matchRoutes: ", matchingRoutes);
-
                     const dataCalls = loadRouteData(matchingRoutes, store.dispatch);
 
                     await Promise.all(dataCalls);
 
                     const markup = ReactDOMServer.renderToString(
-                            <Provider store={store} >
-                                <StaticRouter context={context} location={request.url.pathname}>
-                                    {renderRoutes(routes)}
-                                </StaticRouter>
-                            </Provider>
-                        );
+                        <Provider store={store} >
+                            <StaticRouter context={context} location={request.url.pathname}>
+                                {renderRoutes(routes)}
+                            </StaticRouter>
+                        </Provider>
+                    );
 
                     const initialData = store.getState();
                     const fullHTML = appTemplate({

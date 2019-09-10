@@ -1,13 +1,37 @@
-import {CALL_HISTORY_METHOD, LOCATION_CHANGE} from "connected-react-router";
+import { CALL_HISTORY_METHOD, LOCATION_CHANGE } from "connected-react-router";
 import loadRouteData from "../load-route-data";
-import {matchRoutes} from "react-router-config";
+import { matchRoutes } from "react-router-config";
 // import {matchPath} from "react-router-dom";
 import routes from "../routes";
 
 const routerTransitionMiddleware = history => store => next => async action => {
-    if (action.type !== CALL_HISTORY_METHOD) {
+    console.log("intercepted connected-react-router. action: ", action);
+    const {
+        type, 
+        payload: {
+            action: navAction
+        } = {}
+    } = action;
+
+    let passThrough = true;
+
+    if (type === CALL_HISTORY_METHOD) {
+        passThrough = false;
+    } else if (type === LOCATION_CHANGE && navAction === "POP") {
+        passThrough = false;
+    }
+
+
+
+    if (passThrough) {
+        console.log("Passing " + type + " through via " + navAction);
         return next(action);
     }
+
+    console.log("NOT Passing " + type + " through via " + navAction);
+    console.log("---------------------------------------------------------");
+    console.log("");
+
 
     const {
         payload,
@@ -19,7 +43,7 @@ const routerTransitionMiddleware = history => store => next => async action => {
             action: historyAction,
             isFirstRendering
         } = {}
-    } = action || {}
+    } = action || {};
 
     const {
         dispatch
@@ -27,15 +51,10 @@ const routerTransitionMiddleware = history => store => next => async action => {
     const toRoute = pathname || payload.args[0];
  
     const matchingRoutes = matchRoutes(routes, toRoute);
-    // const matchingRoutes = matchPath(toRoute, {path: "/animals/:animalName"});
-    console.log("matchingRoutes: ", matchingRoutes);
 
     await Promise.all(loadRouteData(matchingRoutes, dispatch));
 
-    console.log("intercepted connected-react-router. action: ", action, "payload: ", payload);
-    console.log("state: ", store.getState());
-
     next(action);
-}
+};
 
 export default routerTransitionMiddleware;
